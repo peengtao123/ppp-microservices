@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.springframework.samples.petclinic.config</groupId>
-	<artifactId>config-server</artifactId>
+	<artifactId>ppp-config-server</artifactId>
 	<packaging>jar</packaging>
 	<description>Spring PetClinic Config Server</description>
 
     <parent>
         <groupId>org.springframework.samples</groupId>
-        <artifactId>spring-petclinic-microservices</artifactId>
+        <artifactId>ppp-microservices</artifactId>
         <version>4.0.1</version>
     </parent>
 

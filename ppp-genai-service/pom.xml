@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.springframework.samples.petclinic.genai</groupId>
-	<artifactId>genai-service</artifactId>
+	<artifactId>ppp-genai-service</artifactId>
 	<packaging>jar</packaging>
 	<description>Spring PetClinic Generative AI Service</description>
 
 	<parent>
 		<groupId>org.springframework.samples</groupId>
-		<artifactId>spring-petclinic-microservices</artifactId>
+		<artifactId>ppp-microservices</artifactId>
         <version>4.0.1</version>
 	</parent>
 

@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.springframework.samples.petclinic.visits</groupId>
-    <artifactId>visits-service</artifactId>
+    <artifactId>ppp-visits-service</artifactId>
     <packaging>jar</packaging>
     <description>Spring PetClinic Visits Service</description>
 
     <parent>
         <groupId>org.springframework.samples</groupId>
-        <artifactId>spring-petclinic-microservices</artifactId>
+        <artifactId>ppp-microservices</artifactId>
         <version>4.0.1</version>
     </parent>
 

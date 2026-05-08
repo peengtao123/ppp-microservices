@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.springframework.samples.petclinic.admin</groupId>
-    <artifactId>admin-server</artifactId>
+    <artifactId>ppp-admin-server</artifactId>
     <packaging>jar</packaging>
     <description>Spring Boot Admin server</description>
 
     <parent>
         <groupId>org.springframework.samples</groupId>
-        <artifactId>spring-petclinic-microservices</artifactId>
+        <artifactId>ppp-microservices</artifactId>
         <version>4.0.1</version>
     </parent>
 
