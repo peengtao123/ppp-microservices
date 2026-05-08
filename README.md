@@ -1,14 +1,10 @@
-# Spring Petclinic 示例应用的分布式版本（基于 Spring Cloud 和 Spring AI 构建）
+# ppp 示例应用的分布式版本（基于 Spring Cloud 和 Spring AI 构建）
 
 [![构建状态](https://github.com/spring-petclinic/spring-petclinic-microservices/actions/workflows/maven-build.yml/badge.svg)](https://github.com/spring-petclinic/spring-petclinic-microservices/actions/workflows/maven-build.yml)
 [![许可证](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 这个微服务分支最初源自 [AngularJS 版本](https://github.com/spring-petclinic/spring-petclinic-angular1)，用于演示如何将示例 Spring 应用程序拆分为[微服务](http://www.martinfowler.com/articles/microservices.html)。
 为了实现这一目标，我们使用了来自 [Spring Cloud Netflix](https://github.com/spring-cloud/spring-cloud-netflix) 技术栈的 Spring Cloud Gateway、Spring Cloud Circuit Breaker、Spring Cloud Config、Micrometer Tracing、Resilience4j、Open Telemetry 和 Eureka Service Discovery。
-
-[![在 GitHub Codespaces 中打开](https://github.com/codespaces/badge.svg)](https://codespaces.new/spring-petclinic/spring-petclinic-microservices)
-
-[![在 Codeanywhere 中打开](https://codeanywhere.com/img/open-in-codeanywhere-btn.svg)](https://app.codeanywhere.com/#https://github.com/spring-petclinic/spring-petclinic-microservices)
 
 ## 在本地不使用 Docker 启动服务
 
@@ -64,7 +60,7 @@ Tracing Server、Admin Server、Grafana 和 Prometheus 的启动是可选的。
 
 每个基于 Java 的应用程序都以 `chaos-monkey` Profile 启动，以便与 Spring Boot Chaos Monkey 交互。您可以查看 (README)[scripts/chaos/README.md] 以获取有关如何使用 `./scripts/chaos/call_chaos.sh` 辅助脚本来启用攻击的更多信息。
 
-## 了解 Spring Petclinic 应用程序
+## 了解 ppp 应用程序
 
 [查看 Spring Petclinic Framework 版本的演示文稿](http://fr.slideshare.net/AntoineRey/spring-framework-petclinic-sample-application)
 
@@ -129,7 +125,7 @@ Spring Petclinic 集成了一个聊天机器人，允许您使用自然语言与
     export AZURE_OPENAI_KEY="your_api_key_here"
     ```
 
-## 如果您发现 Spring Petclinic Microservices 的错误/建议改进
+## 如果您发现 ppp 的错误/建议改进
 
 我们的问题追踪器在这里：https://github.com/spring-petclinic/spring-petclinic-microservices/issues
 
