@@ -153,7 +153,7 @@ services:
         limits:
           memory: 256M
     ports:
-    - "3030:3000"
+    - "3000:3000"
 
   prometheus-server:
     build: ./docker/prometheus
@@ -164,9 +164,11 @@ services:
         limits:
           memory: 256M
     ports:
-    - "9091:9090"
+    - "9090:9090"
 
   nginx-proxy:
       build: ./docker/nginx
       image: fox/ext-nginx-proxy
       container_name: nginx-proxy
+      ports:
+      - "80:80"

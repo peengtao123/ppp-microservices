@@ -36,6 +36,12 @@ spring:
                 - Path=/api/customer/**
               filters:
                 - StripPrefix=2
+            - id: aaa-service
+              uri: lb://aaa-service
+              predicates:
+                  - Path=/api/aaa/**
+              filters:
+                - StripPrefix=2
             - id: genai-service
               uri: lb://genai-service
               predicates:
