@@ -1,0 +1,2 @@
+FROM openzipkin/zipkin
+

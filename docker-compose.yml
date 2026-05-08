@@ -102,7 +102,7 @@ services:
      - "8084:8084"
 
   api-gateway:
-    image: fox/spring-petclinic-api-gateway
+    image: fox/api-gateway
     container_name: api-gateway
     deploy:
       resources:
@@ -117,9 +117,9 @@ services:
      - "8080:8080"
 
   tracing-server:
+    build: ./docker/zipkin
     image: fox/zipkin
     container_name: tracing-server
-
     deploy:
       resources:
         limits:
