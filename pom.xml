@@ -24,6 +24,7 @@
         <module>ppp-config-server</module>
         <module>ppp-discovery-server</module>
         <module>ppp-api-gateway</module>
+        <module>untitled</module>
     </modules>
 
     <properties>
