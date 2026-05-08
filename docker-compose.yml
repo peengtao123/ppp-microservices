@@ -1,6 +1,6 @@
 services:
   config-server:
-    image: springcommunity/spring-petclinic-config-server
+    image: fox/config-server
     volumes:
      - ./docker/config-server:/config-server
     container_name: config-server
@@ -20,7 +20,7 @@ services:
      - "8888:8888"
 
   discovery-server:
-    image: springcommunity/spring-petclinic-discovery-server
+    image: fox/discovery-server
     container_name: discovery-server
     deploy:
       resources:
@@ -38,7 +38,7 @@ services:
      - "8761:8761"
 
   customers-service:
-    image: springcommunity/spring-petclinic-customers-service
+    image: fox/customers-service
     container_name: customers-service
     deploy:
       resources:
@@ -53,7 +53,7 @@ services:
     - "8081:8081"
 
   visits-service:
-    image: springcommunity/spring-petclinic-visits-service
+    image: fox/visits-service
     container_name: visits-service
     deploy:
       resources:
@@ -68,7 +68,7 @@ services:
      - "8082:8082"
 
   vets-service:
-    image: springcommunity/spring-petclinic-vets-service
+    image: fox/vets-service
     container_name: vets-service
     deploy:
       resources:
@@ -83,7 +83,7 @@ services:
      - "8083:8083"
 
   genai-service:
-    image: springcommunity/spring-petclinic-genai-service
+    image: fox/genai-service
     container_name: genai-service
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
@@ -102,7 +102,7 @@ services:
      - "8084:8084"
 
   api-gateway:
-    image: springcommunity/spring-petclinic-api-gateway
+    image: fox/spring-petclinic-api-gateway
     container_name: api-gateway
     deploy:
       resources:
@@ -117,8 +117,9 @@ services:
      - "8080:8080"
 
   tracing-server:
-    image: openzipkin/zipkin
+    image: fox/zipkin
     container_name: tracing-server
+
     deploy:
       resources:
         limits:
@@ -127,7 +128,7 @@ services:
      - "9411:9411"
 
   admin-server:
-    image: springcommunity/spring-petclinic-admin-server
+    image: fox/admin-server
     container_name: admin-server
     deploy:
       resources:
@@ -146,6 +147,7 @@ services:
   grafana-server:
     build: ./docker/grafana
     container_name: grafana-server
+    image: fox/grafana-server
     deploy:
       resources:
         limits:
@@ -156,9 +158,15 @@ services:
   prometheus-server:
     build: ./docker/prometheus
     container_name: prometheus-server
+    image: fox/prometheus-server
     deploy:
       resources:
         limits:
           memory: 256M
     ports:
     - "9091:9090"
+
+  nginx-proxy:
+      build: ./docker/nginx
+      image: fox/nginx-proxy
+      container_name: nginx-proxy

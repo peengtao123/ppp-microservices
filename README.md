@@ -1,289 +1,258 @@
-# Distributed version of the Spring PetClinic Sample Application built with Spring Cloud and Spring AI
+# Spring Petclinic 示例应用的分布式版本（基于 Spring Cloud 和 Spring AI 构建）
 
-[![Build Status](https://github.com/spring-petclinic/spring-petclinic-microservices/actions/workflows/maven-build.yml/badge.svg)](https://github.com/spring-petclinic/spring-petclinic-microservices/actions/workflows/maven-build.yml)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![构建状态](https://github.com/spring-petclinic/spring-petclinic-microservices/actions/workflows/maven-build.yml/badge.svg)](https://github.com/spring-petclinic/spring-petclinic-microservices/actions/workflows/maven-build.yml)
+[![许可证](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-This microservices branch was initially derived from [AngularJS version](https://github.com/spring-petclinic/spring-petclinic-angular1) to demonstrate how to split sample Spring application into [microservices](http://www.martinfowler.com/articles/microservices.html).
-To achieve that goal, we use Spring Cloud Gateway, Spring Cloud Circuit Breaker, Spring Cloud Config, Micrometer Tracing, Resilience4j, Open Telemetry 
-and the Eureka Service Discovery from the [Spring Cloud Netflix](https://github.com/spring-cloud/spring-cloud-netflix) technology stack.
+这个微服务分支最初源自 [AngularJS 版本](https://github.com/spring-petclinic/spring-petclinic-angular1)，用于演示如何将示例 Spring 应用程序拆分为[微服务](http://www.martinfowler.com/articles/microservices.html)。
+为了实现这一目标，我们使用了来自 [Spring Cloud Netflix](https://github.com/spring-cloud/spring-cloud-netflix) 技术栈的 Spring Cloud Gateway、Spring Cloud Circuit Breaker、Spring Cloud Config、Micrometer Tracing、Resilience4j、Open Telemetry 和 Eureka Service Discovery。
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/spring-petclinic/spring-petclinic-microservices)
+[![在 GitHub Codespaces 中打开](https://github.com/codespaces/badge.svg)](https://codespaces.new/spring-petclinic/spring-petclinic-microservices)
 
-[![Open in Codeanywhere](https://codeanywhere.com/img/open-in-codeanywhere-btn.svg)](https://app.codeanywhere.com/#https://github.com/spring-petclinic/spring-petclinic-microservices)
+[![在 Codeanywhere 中打开](https://codeanywhere.com/img/open-in-codeanywhere-btn.svg)](https://app.codeanywhere.com/#https://github.com/spring-petclinic/spring-petclinic-microservices)
 
-## Starting services locally without Docker
+## 在本地不使用 Docker 启动服务
 
-Every microservice is a Spring Boot application and can be started locally using IDE or `../mvnw spring-boot:run` command.
-Please note that supporting services (Config and Discovery Server) must be started before any other application (Customers, Vets, Visits and API).
-Startup of Tracing server, Admin server, Grafana and Prometheus is optional.
-If everything goes well, you can access the following services at given location:
+每个微服务都是一个 Spring Boot 应用程序，可以使用 IDE 或 `../mvnw spring-boot:run` 命令在本地启动。
+请注意，在启动任何其他应用程序（Customers、Vets、Visits 和 API）之前，必须先启动支持服务（Config Server 和 Discovery Server）。
+Tracing Server、Admin Server、Grafana 和 Prometheus 的启动是可选的。
+如果一切顺利，您可以访问以下服务：
 * Discovery Server - http://localhost:8761
 * Config Server - http://localhost:8888
-* AngularJS frontend (API Gateway) - http://localhost:8080
-* Customers, Vets, Visits and GenAI Services - random port, check Eureka Dashboard 
-* Tracing Server (Zipkin) - http://localhost:9411/zipkin/ (we use [openzipkin](https://github.com/openzipkin/zipkin/tree/main/zipkin-server))
+* AngularJS 前端（API Gateway）- http://localhost:8080
+* Customers、Vets、Visits 和 GenAI 服务 - 随机端口，请查看 Eureka Dashboard
+* Tracing Server (Zipkin) - http://localhost:9411/zipkin/（我们使用 [openzipkin](https://github.com/openzipkin/zipkin/tree/main/zipkin-server)）
 * Admin Server (Spring Boot Admin) - http://localhost:9090
 * Grafana Dashboards - http://localhost:3030
 * Prometheus - http://localhost:9091
 
-You can tell Config Server to use your local Git repository by using `native` Spring profile and setting
-`GIT_REPO` environment variable, for example:
+您可以通过使用 `native` Spring Profile 并设置 `GIT_REPO` 环境变量来告诉 Config Server 使用您的本地 Git 仓库，例如：
 `-Dspring.profiles.active=native -DGIT_REPO=/projects/spring-petclinic-microservices-config`
 
-## Starting services locally with docker-compose
-In order to start entire infrastructure using Docker, you have to build images by executing
-``bash
-./mvnw clean install -P buildDocker
-``
-This requires `Docker` or `Docker desktop` to be installed and running.
+## 在本地使用 docker-compose 启动服务
 
-Alternatively you can also build all the images on `Podman`, which requires Podman or Podman Desktop to be installed and running.
+为了使用 Docker 启动整个基础设施，您必须执行以下命令来构建镜像：
+```bash
+./mvnw clean install -P buildDocker
+```
+这需要安装并运行 `Docker` 或 `Docker Desktop`。
+
+或者，您也可以在 `Podman` 上构建所有镜像，这需要安装并运行 Podman 或 Podman Desktop。
 ```bash
 ./mvnw clean install -PbuildDocker -Dcontainer.executable=podman
 ```
-By default, the Docker OCI image is build for an `linux/amd64` platform.
-For other architectures, you could change it by using the `-Dcontainer.platform` maven command line argument.
-For instance, if you target container images for an Apple M2, you could use the command line with the `linux/arm64` architecture:
+默认情况下，Docker OCI 镜像是为 `linux/amd64` 平台构建的。
+对于其他架构，您可以使用 `-Dcontainer.platform` Maven 命令行参数进行更改。
+例如，如果您的目标是 Apple M2 的容器镜像，您可以使用以下命令，指定 `linux/arm64` 架构：
 ```bash
 ./mvnw clean install -P buildDocker -Dcontainer.platform="linux/arm64"
 ```
 
-Once images are ready, you can start them with a single command
-`docker compose up` or `podman-compose up`. 
+一旦镜像准备就绪，您可以使用单个命令启动它们：
+`docker compose up` 或 `podman-compose up`。
 
-Containers startup order is coordinated with the `service_healthy` condition of the Docker Compose [depends-on](https://github.com/compose-spec/compose-spec/blob/main/spec.md#depends_on) expression 
-and the [healthcheck](https://github.com/compose-spec/compose-spec/blob/main/spec.md#healthcheck) of the service containers. 
-After starting services, it takes a while for API Gateway to be in sync with service registry,
-so don't be scared of initial Spring Cloud Gateway timeouts. You can track services availability using Eureka dashboard
-available by default at http://localhost:8761.
+容器的启动顺序通过 Docker Compose [depends-on](https://github.com/compose-spec/compose-spec/blob/main/spec.md#depends_on) 表达式的 `service_healthy` 条件和服务容器的 [healthcheck](https://github.com/compose-spec/compose-spec/blob/main/spec.md#healthcheck) 进行协调。
+启动服务后，API Gateway 需要一些时间才能与服务注册表同步，因此不要担心初始的 Spring Cloud Gateway 超时。您可以通过 Eureka Dashboard（默认位于 http://localhost:8761）跟踪服务的可用性。
 
-The `main` branch uses an Eclipse Temurin with Java 17 as Docker base image.
+`main` 分支使用带有 Java 17 的 Eclipse Temurin 作为 Docker 基础镜像。
 
-*NOTE: Under MacOSX or Windows, make sure that the Docker VM has enough memory to run the microservices. The default settings
-are usually not enough and make the `docker-compose up` painfully slow.*
+*注意：在 MacOSX 或 Windows 下，请确保 Docker VM 有足够的内存来运行微服务。默认设置通常不够，会使 `docker-compose up` 运行得非常缓慢。*
 
 
-## Starting services locally with docker-compose and Java
-If you experience issues with running the system via docker-compose you can try running the `./scripts/run_all.sh` script that will start the infrastructure services via docker-compose and all the Java based applications via standard `nohup java -jar ...` command. The logs will be available under `${ROOT}/target/nameoftheapp.log`. 
+## 在本地使用 docker-compose 和 Java 启动服务
 
-Each of the java based applications is started with the `chaos-monkey` profile in order to interact with Spring Boot Chaos Monkey. You can check out the (README)[scripts/chaos/README.md] for more information about how to use the `./scripts/chaos/call_chaos.sh` helper script to enable assaults.
+如果您在通过 docker-compose 运行系统时遇到问题，可以尝试运行 `./scripts/run_all.sh` 脚本，该脚本将通过 docker-compose 启动基础设施服务，并通过标准的 `nohup java -jar ...` 命令启动所有基于 Java 的应用程序。日志将在 `${ROOT}/target/nameoftheapp.log` 下可用。
 
-## Understanding the Spring Petclinic application
+每个基于 Java 的应用程序都以 `chaos-monkey` Profile 启动，以便与 Spring Boot Chaos Monkey 交互。您可以查看 (README)[scripts/chaos/README.md] 以获取有关如何使用 `./scripts/chaos/call_chaos.sh` 辅助脚本来启用攻击的更多信息。
 
-[See the presentation of the Spring Petclinic Framework version](http://fr.slideshare.net/AntoineRey/spring-framework-petclinic-sample-application)
+## 了解 Spring Petclinic 应用程序
 
-[A blog post introducing the Spring Petclinic Microsevices](http://javaetmoi.com/2018/10/architecture-microservices-avec-spring-cloud/) (french language)
+[查看 Spring Petclinic Framework 版本的演示文稿](http://fr.slideshare.net/AntoineRey/spring-framework-petclinic-sample-application)
 
-You can then access petclinic here: http://localhost:8080/
+[介绍 Spring Petclinic Microservices 的博客文章](http://javaetmoi.com/2018/10/architecture-microservices-avec-spring-cloud/)（法语）
 
-## Microservices Overview
+然后您可以在这里访问 petclinic：http://localhost:8080/
 
-This project consists of several microservices:
-- **Customers Service**: Manages customer data.
-- **Vets Service**: Handles information about veterinarians.
-- **Visits Service**: Manages pet visit records.
-- **GenAI Service**: Provides a chatbot interface to the application.
-- **API Gateway**: Routes client requests to the appropriate services.
-- **Config Server**: Centralized configuration management for all services.
-- **Discovery Server**: Eureka-based service registry.
+## 微服务概述
 
-Each service has its own specific role and communicates via REST APIs.
+本项目由以下几个微服务组成：
+- **Customers Service（客户服务）**：管理客户数据。
+- **Vets Service（兽医服务）**：处理兽医信息。
+- **Visits Service（就诊服务）**：管理宠物就诊记录。
+- **GenAI Service（生成式 AI 服务）**：提供聊天机器人接口。
+- **API Gateway（API 网关）**：将客户端请求路由到适当的服务。
+- **Config Server（配置服务器）**：所有服务的集中配置管理。
+- **Discovery Server（发现服务器）**：基于 Eureka 的服务注册中心。
 
-
-![Spring Petclinic Microservices screenshot](docs/application-screenshot.png)
+每个服务都有其特定的角色，并通过 REST API 进行通信。
 
 
-**Architecture diagram of the Spring Petclinic Microservices**
+![Spring Petclinic Microservices 截图](docs/application-screenshot.png)
 
-![Spring Petclinic Microservices architecture](docs/microservices-architecture-diagram.jpg)
 
-## Integrating the Spring AI Chatbot
+**Spring Petclinic Microservices 架构图**
 
-Spring Petclinic integrates a Chatbot that allows you to interact with the application in a natural language. Here are some examples of what you could ask:
+![Spring Petclinic Microservices 架构](docs/microservices-architecture-diagram.jpg)
 
-1. Please list the owners that come to the clinic.
-2. Are there any vets that specialize in surgery?
-3. Is there an owner named Betty?
-4. Which owners have dogs?
-5. Add a dog for Betty. Its name is Moopsie.
-6. Create a new owner.
+## 集成 Spring AI 聊天机器人
 
-![Screenshot of the chat dialog](docs/spring-ai.png)
+Spring Petclinic 集成了一个聊天机器人，允许您使用自然语言与应用程序交互。以下是一些您可以询问的示例：
 
-This `spring-petlinic-genai-service` microservice currently supports **OpenAI** (default) or **Azure's OpenAI** as the LLM provider.
-In order to start the microservice, perform the following steps:
+1. 请来诊所的主人名单。
+2. 有专门做手术的兽医吗？
+3. 有一个叫 Betty 的主人吗？
+4. 哪些主人有狗？
+5. 给 Betty 添加一只狗，名字叫 Moopsie。
+6. 创建一个新主人。
 
-1. Decide which provider you want to use. By default, the `spring-ai-starter-model-openai` dependency is enabled. 
-   You can change it to `spring-ai-starter-model-azure-openai`in the `pom.xml`.
-2. Create an OpenAI API key or a Azure OpenAI resource in your Azure Portal.
-   Refer to the [OpenAI's quickstart](https://platform.openai.com/docs/quickstart) or [Azure's documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/) for further information on how to obtain these.
-   You only need to populate the provider you're using - either openai, or azure-openai.
-   If you don't have your own OpenAI API key, don't worry!
-   You can temporarily use the `demo` key, which OpenAI provides free of charge for demonstration purposes.
-   This `demo` key has a quota, is limited to the `gpt-4o-mini` model, and is intended solely for demonstration use.
-   With your own OpenAI account, you can test the `gpt-4o` model by modifying the `deployment-name` property of the `application.yml` file.
-3. Export your API keys and endpoint as environment variables:
-    * either OpenAI:
+![聊天对话框截图](docs/spring-ai.png)
+
+这个 `spring-petclinic-genai-service` 微服务目前支持 **OpenAI**（默认）或 **Azure OpenAI** 作为 LLM 提供商。
+为了启动微服务，请执行以下步骤：
+
+1. 决定要使用的提供商。默认情况下，启用的是 `spring-ai-starter-model-openai` 依赖。
+   您可以在 `pom.xml` 中将其更改为 `spring-ai-starter-model-azure-openai`。
+2. 创建 OpenAI API 密钥或在 Azure Portal 中创建 Azure OpenAI 资源。
+   请参阅 [OpenAI 快速入门](https://platform.openai.com/docs/quickstart) 或 [Azure 文档](https://learn.microsoft.com/en-us/azure/ai-services/openai/) 以获取更多信息。
+   您只需要填充您正在使用的提供商——无论是 openai 还是 azure-openai。
+   如果您没有自己的 OpenAI API 密钥，不用担心！
+   您可以临时使用 `demo` 密钥，这是 OpenAI 免费提供的用于演示目的的密钥。
+   这个 `demo` 密钥有配额限制，仅限于 `gpt-4o-mini` 模型，仅用于演示用途。
+   使用您自己的 OpenAI 账户，您可以通过修改 `application.yml` 文件的 `deployment_name` 属性来测试 `gpt-4o` 模型。
+3. 将您的 API 密钥和端点作为环境变量导出：
+    * 如果使用 OpenAI：
     ```bash
     export OPENAI_API_KEY="your_api_key_here"
     ```
-    * or Azure OpenAI:
+    * 如果使用 Azure OpenAI：
     ```bash
     export AZURE_OPENAI_ENDPOINT="https://your_resource.openai.azure.com"
     export AZURE_OPENAI_KEY="your_api_key_here"
     ```
 
-## In case you find a bug/suggested improvement for Spring Petclinic Microservices
+## 如果您发现 Spring Petclinic Microservices 的错误/建议改进
 
-Our issue tracker is available here: https://github.com/spring-petclinic/spring-petclinic-microservices/issues
+我们的问题追踪器在这里：https://github.com/spring-petclinic/spring-petclinic-microservices/issues
 
-## Database configuration
+## 数据库配置
 
-In its default configuration, Petclinic uses an in-memory database (HSQLDB) which gets populated at startup with data.
-A similar setup is provided for MySql in case a persistent database configuration is needed.
-Dependency for Connector/J, the MySQL JDBC driver is already included in the `pom.xml` files.
+在默认配置中，Petclinic 使用内存数据库（HSQLDB），在启动时会填充数据。
+如果需要持久化数据库配置，也提供了类似的 MySQL 设置。
+Connector/J（MySQL JDBC 驱动程序）的依赖已包含在 `pom.xml` 文件中。
 
-### Start a MySql database
+### 启动 MySQL 数据库
 
-You may start a MySql database with docker:
+您可以使用 Docker 启动 MySQL 数据库：
 
 ```
 docker run -e MYSQL_ROOT_PASSWORD=petclinic -e MYSQL_DATABASE=petclinic -p 3306:3306 mysql:8.4.5
 ```
-or download and install the MySQL database (e.g., MySQL Community Server 8.4.5 LTS), which can be found here: https://dev.mysql.com/downloads/
 
-### Use the Spring 'mysql' profile
+或者下载并安装 MySQL 数据库（例如 MySQL Community Server 8.4.5 LTS），可以在这里找到：https://dev.mysql.com/downloads/
 
-To use a MySQL database, you have to start 3 microservices (`visits-service`, `customers-service` and `vets-services`)
-with the `mysql` Spring profile. Add the `--spring.profiles.active=mysql` as program argument.
+### 使用 Spring 'mysql' Profile
 
-By default, at startup, database schema will be created and data will be populated.
-You may also manually create the PetClinic database and data by executing the `"db/mysql/{schema,data}.sql"` scripts of each 3 microservices. 
-In the `application.yml` of the [Configuration repository], set the `initialization-mode` to `never`.
+要使用 MySQL 数据库，您必须使用 `mysql` Spring Profile 启动 3 个微服务（`visits-service`、`customers-service` 和 `vets-services`）。
+添加 `--spring.profiles.active=mysql` 作为程序参数。
 
-If you are running the microservices with Docker, you have to add the `mysql` profile into the (Dockerfile)[docker/Dockerfile]:
+默认情况下，在启动时将创建数据库模式并填充数据。
+您也可以通过执行每个微服务的 `"db/mysql/{schema,data}.sql"` 脚本来手动创建 PetClinic 数据库和数据。
+在 [配置仓库] 的 `application.yml` 中，将 `initialization-mode` 设置为 `never`。
+
+如果您使用 Docker 运行微服务，则必须在 (Dockerfile)[docker/Dockerfile] 中添加 `mysql` Profile：
 ```
 ENV SPRING_PROFILES_ACTIVE docker,mysql
 ```
-In the `mysql section` of the `application.yml` from the [Configuration repository], you have to change 
-the host and port of your MySQL JDBC connection string. 
+在 [配置仓库] 的 `application.yml` 的 `mysql 部分`，您必须更改 MySQL JDBC 连接字符串的主机和端口。
 
-## Custom metrics monitoring
+## 自定义指标监控
 
-Grafana and Prometheus are included in the `docker-compose.yml` configuration, and the public facing applications
-have been instrumented with [MicroMeter](https://micrometer.io) to collect JVM and custom business metrics.
+Grafana 和 Prometheus 包含在 `docker-compose.yml` 配置中，面向公众的应用程序已经使用 [MicroMeter](https://micrometer.io) 进行仪器化，以收集 JVM 和自定义业务指标。
 
-A JMeter load testing script is available to stress the application and generate metrics: [petclinic_test_plan.jmx](spring-petclinic-api-gateway/src/test/jmeter/petclinic_test_plan.jmx)
+一个 JMeter 负载测试脚本可用于压力测试应用程序并生成指标：[petclinic_test_plan.jmx](spring-petclinic-api-gateway/src/test/jmeter/petclinic_test_plan.jmx)
 
-![Grafana metrics dashboard](docs/grafana-custom-metrics-dashboard.png)
+![Grafana 指标仪表板](docs/grafana-custom-metrics-dashboard.png)
 
-### Using Prometheus
+### 使用 Prometheus
 
-* Prometheus can be accessed from your local machine at http://localhost:9091
+* 您可以从本地机器访问 Prometheus：http://localhost:9091
 
-### Using Grafana with Prometheus
+### 使用 Grafana 和 Prometheus
 
-* An anonymous access and a Prometheus datasource are setup.
-* A `Spring Petclinic Metrics` Dashboard is available at the URL http://localhost:3030/d/69JXeR0iw/spring-petclinic-metrics.
-You will find the JSON configuration file here: [docker/grafana/dashboards/grafana-petclinic-dashboard.json]().
-* You may create your own dashboard or import the [Micrometer/SpringBoot dashboard](https://grafana.com/dashboards/4701) via the Import Dashboard menu item.
-The id for this dashboard is `4701`.
+* 设置了匿名访问和 Prometheus 数据源。
+* `Spring Petclinic Metrics` 仪表板可在 URL http://localhost:3030/d/69JXeR0iw/spring-petclinic-metrics 访问。
+  您可以在这里找到 JSON 配置文件：[docker/grafana/dashboards/grafana-petclinic-dashboard.json]()。
+* 您可以通过 Import Dashboard 菜单项创建自己的仪表板或导入 [Micrometer/SpringBoot 仪表板](https://grafana.com/dashboards/4701)。
+  该仪表板的 ID 是 `4701`。
 
-### Custom metrics
-Spring Boot registers a lot number of core metrics: JVM, CPU, Tomcat, Logback... 
-The Spring Boot auto-configuration enables the instrumentation of requests handled by Spring MVC.
-All those three REST controllers `OwnerResource`, `PetResource` and `VisitResource` have been instrumented by the `@Timed` Micrometer annotation at class level.
+### 自定义指标
+Spring Boot 注册了大量核心指标：JVM、CPU、Tomcat、Logback...
+Spring Boot 自动配置启用了 Spring MVC 处理的请求的仪器化。
+所有这三个 REST 控制器 `OwnerResource`、`PetResource` 和 `VisitResource` 都在类级别使用了 `@Timed` Micrometer 注释进行仪器化。
 
-* `customers-service` application has the following custom metrics enabled:
+* `customers-service` 应用程序启用了以下自定义指标：
   * @Timed: `petclinic.owner`
   * @Timed: `petclinic.pet`
-* `visits-service` application has the following custom metrics enabled:
+* `visits-service` 应用程序启用了以下自定义指标：
   * @Timed: `petclinic.visit`
 
-## Looking for something in particular?
+## 寻找特定内容？
 
-| Spring Cloud components         | Resources  |
+| Spring Cloud 组件 | 资源 |
 |---------------------------------|------------|
-| Configuration server            | [Config server properties](spring-petclinic-config-server/src/main/resources/application.yml) and [Configuration repository] |
-| Service Discovery               | [Eureka server](spring-petclinic-discovery-server) and [Service discovery client](spring-petclinic-vets-service/src/main/java/org/springframework/samples/petclinic/vets/VetsServiceApplication.java) |
-| API Gateway                     | [Spring Cloud Gateway starter](spring-petclinic-api-gateway/pom.xml) and [Routing configuration](/spring-petclinic-api-gateway/src/main/resources/application.yml) |
-| Docker Compose                  | [Spring Boot with Docker guide](https://spring.io/guides/gs/spring-boot-docker/) and [docker-compose file](docker-compose.yml) |
-| Circuit Breaker                 | [Resilience4j fallback method](spring-petclinic-api-gateway/src/main/java/org/springframework/samples/petclinic/api/boundary/web/ApiGatewayController.java)  |
-| Grafana / Prometheus Monitoring | [Micrometer implementation](https://micrometer.io/), [Spring Boot Actuator Production Ready Metrics] |
+| 配置服务器 | [Config server properties](spring-petclinic-config-server/src/main/resources/application.yml) 和 [配置仓库] |
+| 服务发现 | [Eureka server](spring-petclinic-discovery-server) 和 [Service discovery client](spring-petclinic-vets-service/src/main/java/org/springframework/samples/petclinic/vets/VetsServiceApplication.java) |
+| API 网关 | [Spring Cloud Gateway starter](spring-petclinic-api-gateway/pom.xml) 和 [Routing configuration](/spring-petclinic-api-gateway/src/main/resources/application.yml) |
+| Docker Compose | [Spring Boot with Docker guide](https://spring.io/guides/gs/spring-boot-docker/) 和 [docker-compose file](docker-compose.yml) |
+| 断路器 | [Resilience4j fallback method](spring-petclinic-api-gateway/src/main/java/org/springframework/samples/petclinic/api/boundary/web/ApiGatewayController.java) |
+| Grafana / Prometheus 监控 | [Micrometer implementation](https://micrometer.io/), [Spring Boot Actuator Production Ready Metrics] |
 
-|  Front-end module | Files |
+| 前端模块 | 文件 |
 |-------------------|-------|
-| Node and NPM      | [The frontend-maven-plugin plugin downloads/installs Node and NPM locally then runs Bower and Gulp](spring-petclinic-ui/pom.xml)  |
-| Bower             | [JavaScript libraries are defined by the manifest file bower.json](spring-petclinic-ui/bower.json)  |
-| Gulp              | [Tasks automated by Gulp: minify CSS and JS, generate CSS from LESS, copy other static resources](spring-petclinic-ui/gulpfile.js)  |
-| Angular JS        | [app.js, controllers and templates](spring-petclinic-ui/src/scripts/)  |
+| Node 和 NPM | [frontend-maven-plugin 插件在本地下载/安装 Node 和 NPM，然后运行 Bower 和 Gulp](spring-petclinic-ui/pom.xml) |
+| Bower | [JavaScript 库由清单文件 bower.json 定义](spring-petclinic-ui/bower.json) |
+| Gulp | [Gulp 自动化的任务：压缩 CSS 和 JS，从 LESS 生成 CSS，复制其他静态资源](spring-petclinic-ui/gulpfile.js) |
+| Angular JS | [app.js、控制器和模板](spring-petclinic-ui/src/scripts/) |
 
-## Pushing to a Docker registry
+## 推送到 Docker 仓库
 
-Docker images for `linux/amd64` and `linux/arm64` platforms have been published into DockerHub 
-in the [springcommunity](https://hub.docker.com/u/springcommunity) organization.
-You can pull an image:
+`linux/amd64` 和 `linux/arm64` 平台的 Docker 镜像已在 DockerHub 的 [springcommunity](https://hub.docker.com/u/springcommunity) 组织中发布。
+您可以拉取镜像：
 ```bash
 docker pull springcommunity/spring-petclinic-config-server
 ```
-You may prefer to build then push images to your own Docker registry.
+您可能更愿意构建然后将镜像推送到自己的 Docker 仓库。
 
-### Choose your Docker registry
+### 选择您的 Docker 仓库
 
-You need to define your target Docker registry.
-Make sure you're already logged in by running `docker login <endpoint>` or `docker login` if you're just targeting Docker hub.
+您需要定义目标 Docker 仓库。
+确保您已经通过运行 `docker login <endpoint>` 登录，如果只针对 Docker Hub，则运行 `docker login`。
 
-Setup the `REPOSITORY_PREFIX` env variable to target your Docker registry.
-If you're targeting Docker hub, simple provide your username, for example:
+设置 `REPOSITORY_PREFIX` 环境变量以指向您的 Docker 仓库。
+如果目标是 Docker Hub，只需提供您的用户名，例如：
 ```bash
 export REPOSITORY_PREFIX=springcommunity
 ```
 
-For other Docker registries, provide the full URL to your repository, for example:
+对于其他 Docker 仓库，提供仓库的完整 URL，例如：
 ```bash
 export REPOSITORY_PREFIX=harbor.myregistry.com/petclinic
 ```
 
-To push Docker image for the `linux/amd64` and the `linux/arm64` platform to your own registry, please use the command line:
+要将 `linux/amd64` 和 `linux/arm64` 平台的 Docker 镜像推送到您自己的仓库，请使用以下命令：
 ```bash
 mvn clean install -Dmaven.test.skip -P buildDocker -Ddocker.image.prefix=${REPOSITORY_PREFIX} -Dcontainer.build.extraarg="--push" -Dcontainer.platform="linux/amd64,linux/arm64"
 ```
 
-The `scripts/pushImages.sh` and `scripts/tagImages.sh` shell scripts could also be used once you build your image with the `buildDocker` maven profile.
-The `scripts/tagImages.sh` requires to declare the `VERSION` env variable.
+一旦使用 `buildDocker` Maven Profile 构建镜像后，也可以使用 `scripts/pushImages.sh` 和 `scripts/tagImages.sh` shell 脚本。
+`scripts/tagImages.sh` 需要声明 `VERSION` 环境变量。
 
-## Compiling the CSS
+## 编译 CSS
 
-There is a `petclinic.css` in `spring-petclinic-api-gateway/src/main/resources/static/css`.
-It was generated from the `petclinic.scss` source, combined with the [Bootstrap](https://getbootstrap.com/) library.
-If you make changes to the `scss`, or upgrade Bootstrap, you will need to re-compile the CSS resources
-using the Maven profile `css` of the `spring-petclinic-api-gateway`module.
+在 `spring-petclinic-api-gateway/src/main/resources/static/css` 中有一个 `petclinic.css`。
+它是从 `petclinic.scss` 源生成的，结合了 [Bootstrap](https://getbootstrap.com/) 库。
+如果您对 `scss` 进行了更改或升级了 Bootstrap，则需要使用 `spring-petclinic-api-gateway` 模块的 Maven Profile `css` 重新编译 CSS 资源。
 ```bash
 cd spring-petclinic-api-gateway
 mvn generate-resources -P css
 ```
 
-## Interesting Spring Petclinic forks
-
-The Spring Petclinic `main` branch in the main [spring-projects](https://github.com/spring-projects/spring-petclinic)
-GitHub org is the "canonical" implementation, currently based on Spring Boot and Thymeleaf.
-
-This [spring-petclinic-microservices](https://github.com/spring-petclinic/spring-petclinic-microservices/) project is one of the [several forks](https://spring-petclinic.github.io/docs/forks.html) 
-hosted in a special GitHub org: [spring-petclinic](https://github.com/spring-petclinic).
-If you have a special interest in a different technology stack
-that could be used to implement the Pet Clinic then please join the community there.
-
-
-## Contributing
-
-The [issue tracker](https://github.com/spring-petclinic/spring-petclinic-microservices/issues) is the preferred channel for bug reports, features requests and submitting pull requests.
-
-For pull requests, editor preferences are available in the [editor config](.editorconfig) for easy use in common text editors. Read more and download plugins at <http://editorconfig.org>.
-
-
-[Configuration repository]: https://github.com/spring-petclinic/spring-petclinic-microservices-config
-[Spring Boot Actuator Production Ready Metrics]: https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-metrics.html
-
-## Supported by
-
-[![JetBrains logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg)](https://jb.gg/OpenSourceSupport)
